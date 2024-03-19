@@ -30,15 +30,13 @@ pipeline {
                } 
             }
              post {
-                success {
-                    slackSend channel: '#jenkins_anil',
-                              color: 'green',
-                              message: "Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - SUCCESSFUL!"
-                }
-                failure {
-                    slackSend channel: '#jenkins_anil',
-                              color: 'red',
-                              message: "Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - FAILED!"
+                always{
+                  slackSend channel: '#jenkins_anil', 
+                  color: 'green', 
+                  message:"started ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)",
+                  notifyCommitters: true,  
+                  teamDomain: 'dwithitechnologies', 
+                  tokenCredentialId: 'JENKINS_ANIL'
                 }
             }
 
