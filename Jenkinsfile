@@ -33,7 +33,7 @@ pipeline {
                   slackSend channel: '#jenkins_anil', 
                   color: 'green',  
                   message: "Build - SUCCESSFUL! See the test report $file .", 
-                  file: "${WORKSPACE}/target/site/surefire-report.html" 
+                  // file: "${WORKSPACE}/target/site/surefire-report.html" 
             
                 }
             }
