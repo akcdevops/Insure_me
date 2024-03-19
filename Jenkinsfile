@@ -16,7 +16,8 @@ pipeline {
         }
         stage('Build'){
             steps{
-               sh 'mvn clean package'
+               sh 'mvn clean package install site surefire-report:report'
+               sh 'tree'
             }
         }
         stage('Artifact Upload to S3'){
@@ -24,7 +25,7 @@ pipeline {
                script{
                  withAWS(credentials: 'awscred',region: 'ap-south-1') 
                  {
-                    s3Upload(bucket: 'akcdevops-project1', path: 'target/project1-0.0.1-SNAPSHOT.war',file: 'target/project1-0.0.1-SNAPSHOT.war')
+                    s3Upload(bucket: 'akcdevops-project1', path: 'Insure_me/target/insure-me-1.0.jar',file: 'Insure_me/target/insure-me-1.0.jar')
                  }
                } 
             }
