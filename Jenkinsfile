@@ -26,7 +26,7 @@ pipeline {
         }
         stage('Build'){
             steps{
-               sh 'mvn clean package install site surefile-report:report'
+               sh 'mvn clean package install site surefire-report:report'
             }
             post {
                 always{
