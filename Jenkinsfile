@@ -18,6 +18,7 @@ pipeline {
             steps{
                sh 'mvn clean package install site surefire-report:report'
             }
+            
         }
         stage('Artifact Upload to S3'){
             steps{
@@ -28,8 +29,14 @@ pipeline {
                  }
                } 
             }
+            
 
         }
         
+    }
+    post{
+        success{
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'target/surefire-reports', reportFiles: 'surefire-report.html', reportName: 'Surefire Report', reportTitles: '', useWrapperFileDirectly: true])
+        }
     }
 }
