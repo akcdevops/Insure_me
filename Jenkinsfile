@@ -18,7 +18,7 @@ pipeline {
                   slackSend channel: '#jenkins_anil', 
                   color: 'green', 
                   message:"started  JOB_NAME:${env.JOB_NAME} BUILD_NUMBER:${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)",
-                  file: "${WORKSPACE}/target/site/surefire-report.html",
+                  filePath: "${WORKSPACE}/target/site/surefire-report.html",
                   notifyCommitters: true,  
                   teamDomain: 'dwithitechnologies', 
                   tokenCredentialId: 'JENKINS_ANIL'
