@@ -32,8 +32,8 @@ pipeline {
                 always{
                   slackSend channel: '#jenkins_anil', 
                   color: 'green', 
-                  message: "Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - SUCCESSFUL! See the test report.",
-                  file: "${WORKSPACE}/target/site/surefire-report.html",  
+                  file: "${WORKSPACE}/target/site/surefire-report.html",
+                  message: "Build - SUCCESSFUL! See the test report $file .",  
                   notifyCommitters: true,  
                   teamDomain: 'dwithitechnologies', 
                   tokenCredentialId: 'JENKINS_ANIL'
