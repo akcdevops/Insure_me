@@ -29,10 +29,7 @@ pipeline {
                  }
                } 
             }
-            
-
-        }
-        post {
+             post {
                 success {
                     slackSend channel: '#jenkins_anil',
                               color: 'green',
@@ -44,6 +41,9 @@ pipeline {
                               message: "Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - FAILED!"
                 }
             }
+
+        }
+       
     }
     post{
         success{
