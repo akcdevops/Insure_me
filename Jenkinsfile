@@ -26,14 +26,14 @@ pipeline {
         }
         stage('Build'){
             steps{
-               sh 'mvn clean package install site report:report'
+               sh 'mvn clean package install site surefile-report:report'
             }
             post {
                 always{
                   slackSend channel: '#jenkins_anil', 
                   color: 'green', 
-                  message:message: "Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - SUCCESSFUL! See the test report.",
-                              file: "${WORKSPACE}/target/site/report.html"  
+                  message: "Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - SUCCESSFUL! See the test report.",
+                              file: "${WORKSPACE}/target/site/surefire-report.html"  
                   notifyCommitters: true,  
                   teamDomain: 'dwithitechnologies', 
                   tokenCredentialId: 'JENKINS_ANIL'
@@ -50,23 +50,14 @@ pipeline {
                  }
                } 
             }
-             post {
-                always{
-                  slackSend channel: '#jenkins_anil', 
-                  color: 'green', 
-                  message:"started  JOB_NAME:${env.JOB_NAME} BUILD_NUMBER:${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)",
-                  notifyCommitters: true,  
-                  teamDomain: 'dwithitechnologies', 
-                  tokenCredentialId: 'JENKINS_ANIL'
-                }
-            }
+             
 
         }
        
     }
     post{
         success{
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'target/surefire-reports', reportFiles: 'surefire-report.html', reportName: 'Surefire Report', reportTitles: '', useWrapperFileDirectly: true])
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'target/site', reportFiles: 'surefire-report.html', reportName: 'Surefire Report', reportTitles: '', useWrapperFileDirectly: true])
         }
     }
 }
