@@ -7,17 +7,13 @@ pipeline {
     }
 
     stages {
-        stage('git checkout')
-        {
-            steps 
-            {
+        stage('git checkout') {
+            steps {
                 // Get some code from a GitHub repository
                 git branch: 'master', url: 'https://github.com/akcdevops/Insure_me.git'
             }
-            post 
-            {
-                always
-                {
+            post {
+                always{
                   slackSend channel: 'jenkins', 
                   color: 'green', 
                   message:"started  JOB_NAME:${env.JOB_NAME} BUILD_NUMBER:${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)",
@@ -34,21 +30,17 @@ pipeline {
                sh 'mvn clean package install site surefire-report:report'
             }  
         }
-        stage('Artifact Upload to S3')
-        {
+        stage('Artifact Upload to S3'){
             steps{
                script{
                  withAWS(credentials: 'awscred',region: 'ap-south-1') 
                  {
-                    s3Upload
-                    (
-                        bucket: 'akcdevops-project1', 
-                        path: '/target/insure-me-1.0.jar',
-                        file: 'target/insure-me-1.0.jar'
-                    )
+                    s3Upload(bucket: 'akcdevops-project1', path: '/target/insure-me-1.0.jar',file: 'target/insure-me-1.0.jar')
                  }
                } 
             }
+             
+
         }
        
     }
