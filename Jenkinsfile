@@ -32,7 +32,18 @@ pipeline {
             
 
         }
-        
+        post {
+                success {
+                    slackSend channel: '#jenkins_anil',
+                              color: 'green',
+                              message: "Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - SUCCESSFUL!"
+                }
+                failure {
+                    slackSend channel: '#jenkins_anil',
+                              color: 'red',
+                              message: "Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - FAILED!"
+                }
+            }
     }
     post{
         success{
