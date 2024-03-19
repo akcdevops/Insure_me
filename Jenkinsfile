@@ -17,7 +17,7 @@ pipeline {
         stage('Build'){
             steps{
                sh 'mvn clean package install site surefire-report:report'
-              
+            }
         }
         stage('Artifact Upload to S3'){
             steps{
