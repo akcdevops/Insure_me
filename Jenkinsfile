@@ -13,10 +13,31 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/akcdevops/Insure_me.git'
                 
             }
+            post {
+                always{
+                  slackSend channel: '#jenkins_anil', 
+                  color: 'green', 
+                  message:"started  JOB_NAME:${env.JOB_NAME} BUILD_NUMBER:${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)",
+                  notifyCommitters: true,  
+                  teamDomain: 'dwithitechnologies', 
+                  tokenCredentialId: 'JENKINS_ANIL'
+                }
+            }
         }
         stage('Build'){
             steps{
-               sh 'mvn clean package install site surefire-report:report'
+               sh 'mvn clean package install site report:report'
+            }
+            post {
+                always{
+                  slackSend channel: '#jenkins_anil', 
+                  color: 'green', 
+                  message:message: "Build '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - SUCCESSFUL! See the test report.",
+                              file: "${WORKSPACE}/target/site/report.html"  
+                  notifyCommitters: true,  
+                  teamDomain: 'dwithitechnologies', 
+                  tokenCredentialId: 'JENKINS_ANIL'
+                }
             }
             
         }
@@ -33,7 +54,7 @@ pipeline {
                 always{
                   slackSend channel: '#jenkins_anil', 
                   color: 'green', 
-                  message:"started ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)",
+                  message:"started  JOB_NAME:${env.JOB_NAME} BUILD_NUMBER:${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)",
                   notifyCommitters: true,  
                   teamDomain: 'dwithitechnologies', 
                   tokenCredentialId: 'JENKINS_ANIL'
