@@ -110,8 +110,8 @@ pipeline {
                     // Construct the ECR repository URI
                     def ecrRepoUriversion = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
                     def ecrRepoUri = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:latest"
-                    sh 'docker buid -t  $ecrRepoUriversion . '
-                    sh 'docker buid -t  $ecrRepouri . '
+                    sh "docker buid -t  $ecrRepoUriversion . "
+                    sh "docker buid -t  $ecrRepouri . "
                     // Push the image to ECR
                     sh "docker push $ecrRepoUri"
                     sh "docker push $ecrRepoUriversion"
