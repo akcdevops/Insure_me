@@ -6,9 +6,14 @@ pipeline {
         maven "M3"
     }
     environment {
-    IMAGE_NAME = "challagondlaanilkumar/insureme"
+    DOCKER_HUB = "challagondlaanilkumar"
+    ECR = ""
+    IMAGE_NAME = "insureme"
     CONTAINER_NAME = "insureme"
     VERSION = "v${env.BUILD_NUMBER}"
+    AWS_ACCOUNT_ID = "339713145834"
+    AWS_REGION = "ap-south-1"
+
     }
 
 
@@ -82,14 +87,30 @@ pipeline {
                  withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                 script{
                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                   sh 'docker push ${IMAGE_NAME}:${VERSION} && docker push ${IMAGE_NAME}:latest'
-                   sh 'docker rmi ${IMAGE_NAME}:${VERSION}'
+                   sh 'docker push ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION} && docker push ${DOCKER_HUB}/${IMAGE_NAME}:latest'
+                   
                    
                 }
                 }
             }
 
-        }  
+        } 
+        stage('Push to ECR') {
+            steps {
+                script {
+                    // Get ECR login command (replace with your region if different)
+                    //  sh "aws ecr get-authorization-token --region ${AWS_REGION} --query authorizationData[0].authorizationToken | tr -d '\r'"
+                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+
+                    // Construct the ECR repository URI
+                    def ecrRepoUri = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
+
+                    // Push the image to ECR
+                    sh "docker push $ecrRepoUri"
+                    sh 'docker rmi ${IMAGE_NAME}:${VERSION}'
+                }
+            }
+        } 
     }
     post{
         success{
