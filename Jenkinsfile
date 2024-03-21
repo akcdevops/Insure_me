@@ -5,6 +5,10 @@ pipeline {
         // Install the Maven version configured as "M3" and add it to the path.
         maven "M3"
     }
+    environment {
+        
+        BUILD_NUMBER = env.BUILD_NUMBER 
+    }
 
     stages {
         stage('git checkout') {
@@ -45,10 +49,11 @@ pipeline {
         stage('Docker Build & Run'){
             steps{
                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                    script{
+                    script{  
                     sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                    sh 'docker build -t challagondlaanilkumar/insureme:v1 . ' 
-                    sh 'docker run -d --name insureme -p 8081:8081 challagondlaanilkumar/insureme:v1'
+                    sh 'docker build -t challagondlaanilkumar/insureme:v${BUILD_NUMBER} . '
+                    sh 'docker build -t challagondlaanilkumar/insureme:latest . '
+                    sh 'docker run -d --name insureme -p 8081:8081 challagondlaanilkumar/insureme:v${BUILD_NUMBER}'
                 }
                    }
                 
@@ -60,8 +65,9 @@ pipeline {
                  withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                 script{
                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                   sh 'docker push challagondlaanilkumar/insureme:v1' 
+                   sh 'docker push challagondlaanilkumar/insureme:v${BUILD_NUMBER}'
                    sh 'docker push challagondlaanilkumar/insureme:latest'
+                   sh 'docker rmi -f $(docker images -aq)'
                 }
                 }
             }
