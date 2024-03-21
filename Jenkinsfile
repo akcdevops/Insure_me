@@ -123,6 +123,11 @@ pipeline {
                 }
             }
         } 
+        stage('Ansible Dynamic Inventory'){
+            withAWS(credentials: 'awscred',region: 'ap-south-1') {
+                ansiblePlaybook becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', installation: 'ansible', inventory: 'aws_ec2.yml', playbook: 'ping_playbook.yml'
+            }
+        }
     }
     post{
         success{
