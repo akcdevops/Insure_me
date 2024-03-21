@@ -73,7 +73,9 @@ pipeline {
                         // } else {
                             // echo "Container '${CONTAINER_NAME}' not found."
                             sh 'docker build -t ${IMAGE_NAME}:${VERSION} . '
-                            sh 'docker build -t ${IMAGE_NAME}:latest . '
+                            sh 'docker build -t ${IMAGE_NAME}:latest .'
+                            sh 'docker stop ${CONTAINER_NAME}'
+                            sh 'docker rm ${CONTAINER_NAME}'
                             sh 'docker run -d --name ${CONTAINER_NAME} -p 8081:8081 ${IMAGE_NAME}:latest'
                         // } 
                     }
