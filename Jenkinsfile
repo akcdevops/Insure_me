@@ -51,15 +51,26 @@ pipeline {
         stage('Docker Build & Run'){
             steps{
                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                    script{  
+                    script{ 
                         sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                        sh 'docker build -t ${IMAGE_NAME}:${VERSION} . '
-                        sh 'docker build -t ${IMAGE_NAME}:latest . '
-                        sh 'docker stop ${CONTAINER_NAME}'
-                        sh 'docker rm ${CONTAINER_NAME}'
-                        sh 'docker run -d --name ${CONTAINER_NAME} -p 8081:8081 ${IMAGE_NAME}:latest'
-                    
-                    
+                        def containerExists = sh(returnStatus: true, script: "docker ps -aq --filter name=${CONTAINER_NAME}").trim() != ''
+                        if (containerExists) {
+                            // // Check container status (running or stopped)
+                            // def containerStatus = sh(returnStatus: true, script: "docker inspect --format '{{.State.Status}}' ${CONTAINER_NAME}").trim()
+                            //     if (containerStatus == 'stopped') {
+                            //         echo "Container '${CONTAINER_NAME}' is stopped. Condition met."
+                            //         // Add steps to proceed based on the stopped container (optional)
+                            //     } else {
+                            //         echo "Container '${CONTAINER_NAME}' is not stopped. Skipping actions."
+                            //     }
+                            sh 'docker stop ${CONTAINER_NAME}'
+                            sh 'docker rm ${CONTAINER_NAME}'
+                        } else {
+                            echo "Container '${CONTAINER_NAME}' not found."
+                            sh 'docker build -t ${IMAGE_NAME}:${VERSION} . '
+                            sh 'docker build -t ${IMAGE_NAME}:latest . '
+                            sh 'docker run -d --name ${CONTAINER_NAME} -p 8081:8081 ${IMAGE_NAME}:latest'
+                        } 
                     }
                 }
                 
