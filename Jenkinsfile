@@ -121,8 +121,9 @@ pipeline {
                 script{
                     withAWS(credentials: 'awscred',region: 'ap-south-1') {
                     // ansiblePlaybook becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', installation: 'ansible', inventory: 'aws_ec2.yml', playbook: 'ping_playbook.yml'
-                    sh "ansible-inventory -i --graph"
+                    // sh "ansible-inventory -i --graph"
                     // sh "ansible-playbook -i aws_ec2.yml ping_playbook.yml"
+                    ansiblePlaybook credentialsId: 'akcdevops.pem', disableHostKeyChecking: true, installation: 'ansible', inventory: '/etc/ansibleaws_ec2.yml', playbook: '/etc/ansible/ping.yml', vaultTmpPath: ''
                      }
                 }
             }
