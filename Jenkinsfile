@@ -53,10 +53,9 @@ pipeline {
                     script{  
                     sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                     sh 'docker stop `docker ps -aq` && docker rm `docker ps -aq`'
-                    sh 'docker rmi $(docker images -aq)'
                     sh 'docker build -t ${IMAGE_NAME}:${VERSION} . '
                     sh 'docker build -t ${IMAGE_NAME}:latest . '
-                    sh 'docker run -d --name insureme -p 8081:8081 ${IMAGE_NAME}:${VERSION}'
+                    sh 'docker run -d --name insureme -p 8081:8081 ${IMAGE_NAME}:latest'
                 }
                    }
                 
@@ -68,8 +67,8 @@ pipeline {
                  withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                 script{
                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                   sh 'docker push ${IMAGE_NAME}:${VERSION}'
-                   sh 'docker push ${IMAGE_NAME}:latest'
+                   sh 'docker push ${IMAGE_NAME}:${VERSION} && docker push ${IMAGE_NAME}:latest'
+                   sh 'docker rmi ${IMAGE_NAME}:${VERSION}'
                    
                 }
                 }
