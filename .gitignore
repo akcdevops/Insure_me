@@ -27,6 +27,21 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
+
+.terraform
+.terraformrc
+**/.terraform/*
+.terraform.d
+*.tfstate
+*.tfstate.*
+temp
+terraform.rc
+tmp
+# Auto variables
+terraform.tfvars
+terraform.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
 !**/src/main/**/build/
 !**/src/test/**/build/
 
