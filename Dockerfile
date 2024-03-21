@@ -1,5 +1,5 @@
-FROM openjdk:17-jre-slim
+FROM openjdk:11
 WORKDIR /app
-COPY /target/insure-me-1.0.jar app.jar
+COPY /target/*.jar app.jar
 EXPOSE 8081
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
