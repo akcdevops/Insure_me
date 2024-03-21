@@ -53,6 +53,7 @@ pipeline {
                     script{  
                     sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                     sh 'docker stop `docker ps -aq` && docker rm `docker ps -aq`'
+                    sh 'docker rmi $(docker images -aq)'
                     sh 'docker build -t ${IMAGE_NAME}:${VERSION} . '
                     sh 'docker build -t ${IMAGE_NAME}:latest . '
                     sh 'docker run -d --name insureme -p 8081:8081 ${IMAGE_NAME}:${VERSION}'
@@ -69,7 +70,7 @@ pipeline {
                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                    sh 'docker push ${IMAGE_NAME}:${VERSION}'
                    sh 'docker push ${IMAGE_NAME}:latest'
-                   sh 'docker rmi $(docker images -aq)'
+                   
                 }
                 }
             }
