@@ -102,6 +102,7 @@ pipeline {
         stage('Push to ECR') {
             steps {
                 script {
+                    withAWS(credentials: 'awscred',region: 'ap-south-1') {
                     // Get ECR login command (replace with your region if different)
                     //  sh "aws ecr get-authorization-token --region ${AWS_REGION} --query authorizationData[0].authorizationToken | tr -d '\r'"
                     sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
@@ -115,6 +116,7 @@ pipeline {
                     sh 'docker rmi ${IMAGE_NAME}:${VERSION}'
                     sh 'docker rmi ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION}'
                     sh 'docker rmi ${DOCKER_HUB}/${IMAGE_NAME}:latest'
+                 }
                 }
             }
         } 
