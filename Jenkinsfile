@@ -73,7 +73,9 @@ pipeline {
                         // } else {
                             // echo "Container '${CONTAINER_NAME}' not found."
                             sh 'docker build -t ${IMAGE_NAME}:${VERSION} . '
+                            sh 'docker build -t ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION} . '
                             sh 'docker build -t ${IMAGE_NAME}:latest .'
+                            sh 'docker build -t ${DOCKER_HUB}/${IMAGE_NAME}:latest .'
                             sh 'docker stop ${CONTAINER_NAME}'
                             sh 'docker rm ${CONTAINER_NAME}'
                             sh 'docker run -d --name ${CONTAINER_NAME} -p 8081:8081 ${IMAGE_NAME}:latest'
@@ -105,11 +107,14 @@ pipeline {
                     sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
                     // Construct the ECR repository URI
-                    def ecrRepoUri = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
-
+                    def ecrRepoUriversion = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
+                    def ecrRepoUri = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:latest"
                     // Push the image to ECR
                     sh "docker push $ecrRepoUri"
+                    sh "docker push $ecrRepoUriversion"
                     sh 'docker rmi ${IMAGE_NAME}:${VERSION}'
+                    sh 'docker rmi ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION}'
+                    sh 'docker rmi ${DOCKER_HUB}/${IMAGE_NAME}:latest'
                 }
             }
         } 
