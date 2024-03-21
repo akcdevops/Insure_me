@@ -91,7 +91,7 @@ pipeline {
                 script{
                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                    sh 'docker push ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION} && docker push ${DOCKER_HUB}/${IMAGE_NAME}:latest'
-                   
+                   sh 'docker rmi ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION}'
                    
                 }
                 }
@@ -106,18 +106,19 @@ pipeline {
                     //  sh "aws ecr get-authorization-token --region ${AWS_REGION} --query authorizationData[0].authorizationToken | tr -d '\r'"
                     sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
-                     
+                    sh "docker build -t ${IMAGE_NAME}:latest ."
+                    sh "docker build -t ${IMAGE_NAME}:${VERSION} ."
                     // Construct the ECR repository URI
+                    sh "docker tag ${IMAGE_NAME}:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:latest"
+                    sh "docker tag ${IMAGE_NAME}:${VERSION} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
                     def ecrRepoUriversion = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
                     def ecrRepoUri = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:latest"
-                    sh "docker buid -t  $ecrRepoUriversion . "
-                    sh "docker buid -t  $ecrRepouri . "
+                    
                     // Push the image to ECR
                     sh "docker push $ecrRepoUri"
                     sh "docker push $ecrRepoUriversion"
-                    sh 'docker rmi ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION}'
-                    sh 'docker rmi $ecrRepoUriversion'
-                    sh 'docker rmi $ecrRepoUri'
+                    sh "docker rmi ${IMAGE_NAME}:latest"
+                    sh "docker rmi ${IMAGE_NAME}:${VERSION}"
                  }
                 }
             }
