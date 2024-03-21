@@ -5,6 +5,13 @@ pipeline {
         // Install the Maven version configured as "M3" and add it to the path.
         maven "M3"
     }
+    environment {
+    IMAGE_NAME = "challagondlaanilkumar/insureme"
+    VERSION = "v${env.BUILD_NUMBER}"
+    S3_BUCKET ="insureme-project"
+    S3_TARGET_PATH ="/target/insure-me-1.0.jar"
+    TARGET_FILE = "target/insure-me-1.0.jar"
+    }
 
 
     stages {
@@ -36,7 +43,7 @@ pipeline {
                script{
                  withAWS(credentials: 'awscred',region: 'ap-south-1') 
                  {
-                    s3Upload(bucket: 'insureme-project', path: '/target/insure-me-1.0.jar',file: 'target/insure-me-1.0.jar')
+                    s3Upload(bucket: ${S3_BUCKET}, path: ${S3_TARGET_PATH},file: ${TARGET_FILE})
                  }
                } 
             }
@@ -48,9 +55,9 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                     script{  
                     sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                    sh 'docker build -t challagondlaanilkumar/insureme:v${env.BUILD_NUMBER} . '
-                    sh 'docker build -t challagondlaanilkumar/insureme:latest . '
-                    sh 'docker run -d --name insureme -p 8081:8081 challagondlaanilkumar/insureme:v${env.BUILD_NUMBER}'
+                    sh 'docker build -t ${IMAGE_NAME}:${VERSION} . '
+                    sh 'docker build -t ${IMAGE_NAME}:latest . '
+                    sh 'docker run -d --name insureme -p 8081:8081 ${IMAGE_NAME}:${VERSION}'
                 }
                    }
                 
@@ -62,8 +69,8 @@ pipeline {
                  withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                 script{
                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                   sh 'docker push challagondlaanilkumar/insureme:v${env.BUILD_NUMBER}'
-                   sh 'docker push challagondlaanilkumar/insureme:latest'
+                   sh 'docker push ${IMAGE_NAME}:${VERSION}'
+                   sh 'docker push ${IMAGE_NAME}:latest'
                    sh 'docker rmi -f $(docker images -aq)'
                 }
                 }
