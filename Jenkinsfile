@@ -8,7 +8,6 @@ pipeline {
     environment {
     IMAGE_NAME = "challagondlaanilkumar/insureme"
     VERSION = "v${env.BUILD_NUMBER}"
-    VERSION = "v${env.BUILD_NUMBER-1}"
     }
 
 
