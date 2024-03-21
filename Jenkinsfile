@@ -46,7 +46,7 @@ pipeline {
             steps{
                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                     script{
-                    sh 'usermod -a -G docker jenkins'
+                    sh 'sudo usermod -a -G docker jenkins'
                     sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                     sh 'docker build -t challagondla/insureme:v1 . ' 
                     sh 'docker run -d --name insureme -p 8081:8081 insureme:v1'
