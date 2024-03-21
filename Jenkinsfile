@@ -44,12 +44,24 @@ pipeline {
         }
         stage('Docker Build & Run'){
             steps{
-                docker build -t insureme:v1 .
-                docker run -d --name insureme -p 8081:8081 insureme:v1
+                script{
+                   sh 'docker build -t challagondla/insureme:v1 . ' 
+                   sh 'docker run -d --name insureme -p 8081:8081 insureme:v1'
+                }
             }
 
         }
-       
+        stage('Docker Push'){
+            steps{
+                withCredentials([usernameColonPassword(credentialsId: 'docker', variable: '')]) {
+                script{
+                   sh 'docker push challagondla/insureme:v1' 
+                   sh 'docker push challagondla/insureme:latest'
+                }
+                }
+            }
+
+        }  
     }
     post{
         success{
