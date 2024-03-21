@@ -122,6 +122,7 @@ pipeline {
                     withAWS(credentials: 'awscred',region: 'ap-south-1') {
                     // ansiblePlaybook becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', installation: 'ansible', inventory: 'aws_ec2.yml', playbook: 'ping_playbook.yml'
                     sh "ansible-inventory -i aws_ec2.yml --graph"
+                    sh "ansible-playbook -i aws_ec2.yml ping_playbook.yml"
                      }
                 }
             }
