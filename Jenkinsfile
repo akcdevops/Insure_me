@@ -44,17 +44,22 @@ pipeline {
         }
         stage('Docker Build & Run'){
             steps{
-                script{
+                withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    script{
+                   sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                    sh 'docker build -t challagondla/insureme:v1 . ' 
                    sh 'docker run -d --name insureme -p 8081:8081 insureme:v1'
                 }
+                   }
+                
             }
 
         }
         stage('Docker Push'){
             steps{
-                withCredentials([usernameColonPassword(credentialsId: 'docker', variable: '')]) {
+                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                 script{
+                   sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                    sh 'docker push challagondla/insureme:v1' 
                    sh 'docker push challagondla/insureme:latest'
                 }
