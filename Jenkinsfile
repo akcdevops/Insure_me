@@ -8,6 +8,7 @@ pipeline {
     environment {
     IMAGE_NAME = "challagondlaanilkumar/insureme"
     VERSION = "v${env.BUILD_NUMBER}"
+    VERSION = "v${env.BUILD_NUMBER-1}"
     }
 
 
@@ -52,9 +53,9 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                     script{  
                     sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                    sh 'docker stop `docker ps -aq` && docker rm `docker ps -aq`'
                     sh 'docker build -t ${IMAGE_NAME}:${VERSION} . '
                     sh 'docker build -t ${IMAGE_NAME}:latest . '
-                    sh 'docker stop `docker ps -aq` && docker rm `docker ps -aq`'
                     sh 'docker run -d --name insureme -p 8081:8081 ${IMAGE_NAME}:${VERSION}'
                 }
                    }
@@ -69,7 +70,7 @@ pipeline {
                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                    sh 'docker push ${IMAGE_NAME}:${VERSION}'
                    sh 'docker push ${IMAGE_NAME}:latest'
-                   sh 'docker rmi -f $(docker images -aq)'
+                   sh 'docker rmi $(docker images -aq)'
                 }
                 }
             }
