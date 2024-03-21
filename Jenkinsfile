@@ -57,18 +57,13 @@ pipeline {
                     }
                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                     script{  
-                        def isRunning = sh(returnStatus: true, script: "docker ps -aq --filter name=${CONTAINER_NAME}").trim() != ''
-                    if (isRunning) {
-                        echo "Stopping existing container ${CONTAINER_NAME}..."
-                        sh "docker stop ${CONTAINER_NAME}"
-                        sh "docker rm ${CONTAINER_NAME}"
-                    } else {
-                        echo "No container named ${IMAGE_NAME} found. Skipping stop."
                         sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                         sh 'docker build -t ${IMAGE_NAME}:${VERSION} . '
                         sh 'docker build -t ${IMAGE_NAME}:latest . '
+                        sh 'docker stop ${CONTAINER_NAME}'
+                        sh 'docker rm ${CONTAINER_NAME}'
                         sh 'docker run -d --name ${CONTAINER_NAME} -p 8081:8081 ${IMAGE_NAME}:latest'
-                    }
+                    
                     
                     }
                 }
