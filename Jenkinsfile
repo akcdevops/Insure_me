@@ -8,9 +8,6 @@ pipeline {
     environment {
     IMAGE_NAME = "challagondlaanilkumar/insureme"
     VERSION = "v${env.BUILD_NUMBER}"
-    S3_BUCKET ="insureme-project"
-    S3_TARGET_PATH ="/target/insure-me-1.0.jar"
-    TARGET_FILE = "target/insure-me-1.0.jar"
     }
 
 
@@ -57,6 +54,7 @@ pipeline {
                     sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
                     sh 'docker build -t ${IMAGE_NAME}:${VERSION} . '
                     sh 'docker build -t ${IMAGE_NAME}:latest . '
+                    sh 'docker stop `docker ps -aq` && docker rm `docker ps -aq`'
                     sh 'docker run -d --name insureme -p 8081:8081 ${IMAGE_NAME}:${VERSION}'
                 }
                    }
