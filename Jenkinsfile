@@ -44,8 +44,8 @@ pipeline {
         }
         stage('Docker Build & Run'){
             steps{
-                docker build -t challagondlaanilkumar/insureme:v1 .
-                docker run -d --name insureme -p 8081:8081 challagondlaanilkumar/insureme:v1
+                docker build -t insureme:v1 .
+                docker run -d --name insureme -p 8081:8081 insureme:v1
             }
 
         }
