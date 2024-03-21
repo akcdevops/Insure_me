@@ -50,11 +50,6 @@ pipeline {
         }
         stage('Docker Build & Run'){
             steps{
-                when {
-                        expression {
-                            return env.STOP_EXISTING_CONTAINER == true 
-                         }
-                    }
                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                     script{  
                         sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
