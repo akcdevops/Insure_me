@@ -1,7 +1,5 @@
-From alpine
-USER ubuntu
+FROM openjdk:17-jre-slim
 WORKDIR /app
-RUN apt update && apt install java  && apt install tomcat && apt install maven
-RUN git clone repo.git && cd repo && mvn clean package
-COPY  target/*.jar app.jar
-CMD ["java", "-jar", app.jar]
+COPY /target/insure-me-1.0.jar app.jar
+EXPOSE 8081
+CMD ["java", "-jar", "app.jar"]
