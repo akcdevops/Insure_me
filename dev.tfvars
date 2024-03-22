@@ -1,7 +1,7 @@
 vpc_cidr = "11.0.0.0/16"
 cidr_public_subnet   = "11.0.1.0/24"
 cidr_private_subnet  = "11.0.2.0/24"
-prokprojectname = "insureme"
+projectname = "insureme"
 region = "ap-south-1"
 availability_zone = "ap-south-1a"
 key_name = "ansible"

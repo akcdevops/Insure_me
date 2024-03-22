@@ -147,22 +147,20 @@ pipeline {
             steps{
                 script{
                     if (sh(returnStatus: true, script: 'terraform workspace list | grep -q prod && exit 0 || exit 1').exitCode == 0) {
-                      sh 'terraform init'
-                      sh 'echo "terraform workspace select prod"'
-                      sh ' terraform workspace select prod' 
+                      sh "sudo terraform init"
                       
-                    //   sh 'terraform validate'
-                    //   sh 'terraform plan -var-file=prod.tfvars'
-                    //   sh 'terraform apply -var-file=prod.tfvars--auto-approve'
+                      sh "sudo terraform workspace select prod"
+                      sh "sudo terraform validate"
+                      sh "sudo terraform plan -var-file=prod.tfvars"
+                      sh "sudo terraform apply -var-file=prod.tfvars --auto-approve"
                       
                     } else {
-                      sh 'terraform init'
-                      sh 'terraform workspace new prod'
-                      sh ' terraform workspace select prod' 
-                      
-                    //   sh 'terraform validate'
-                    //   sh 'terraform plan -var-file=prod.tfvars'
-                    //   sh 'terraform apply -var-file=prod.tfvars--auto-approve'
+                      sh 'sudo terraform init'
+                      sh 'sudo terraform workspace new prod'
+                      sh 'sudo terraform workspace select prod' 
+                      sh 'sudo terraform validate'
+                      sh 'sudo terraform plan -var-file=prod.tfvars'
+                      sh 'sudo terraform apply -var-file=prod.tfvars--auto-approve'
                         
                     }
                 }
