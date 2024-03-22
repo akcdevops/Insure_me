@@ -12,14 +12,14 @@ provider "aws" {
   region = var.region
 }
 # Statefile remote backup using s3 bucket and locking with dynamodb
-terraform {
-  backend "s3" {
-    bucket         = "insureme-project"
-    key            = format("terraform.tfstate.d/%s/state.tfstate", terraform.workspace)
-    region         = "ap-south-1"
-    dynamodb_table = "insuremestatefile"
-  }
-}
+# terraform {
+#   backend "s3" {
+#     bucket         = "insureme-project"
+#     key            = format("terraform.tfstate.d/%s/state.tfstate", terraform.workspace)
+#     region         = "ap-south-1"
+#     dynamodb_table = "insuremestatefile"
+#   }
+# }
 
 resource "aws_key_pair" "key" {
   key_name   = "ansible"
