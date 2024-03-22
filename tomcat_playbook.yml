@@ -9,7 +9,7 @@
 
   - name: Install java
     apt:
-      name: java
+      name: openjdk-17-jdk
       state: present
 
   - name: Download tomcat server packages
