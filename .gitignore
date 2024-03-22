@@ -37,6 +37,7 @@ build/
 temp
 terraform.rc
 tmp
+.terraform.lock.hcl
 # Auto variables
 terraform.tfvars
 terraform.tfvars.json

@@ -115,7 +115,53 @@ pipeline {
                  }
                 }
             }
-        } 
+        }
+        stage('Provisioning Dev Server'){
+            steps{
+                script{
+                    if (sh(returnStatus: true, script: 'terraform workspace list | grep -q dev && exit 0 || exit 1').exitCode == 0) {
+                      sh 'echo "terraform workspace select dev"'
+                      sh ' terraform workspace select dev' 
+                      sh 'terraform init'
+                      sh 'terraform validate'
+                      sh 'terraform plan -var-file=dev.tfvars'
+                      sh 'terraform apply -var-file=dev.tfvars--auto-approve'
+                      
+                    } else {
+                      sh 'terraform workspace new dev'
+                      sh ' terraform workspace select dev' 
+                      sh 'terraform init'
+                      sh 'terraform validate'
+                      sh 'terraform plan -var-file=dev.tfvars'
+                      sh 'terraform apply -var-file=dev.tfvars--auto-approve'
+                        
+                    }
+                }
+            }
+        }
+        stage('Provisioning Prod Server'){
+            steps{
+                script{
+                    if (sh(returnStatus: true, script: 'terraform workspace list | grep -q prod && exit 0 || exit 1').exitCode == 0) {
+                      sh 'echo "terraform workspace select prod"'
+                      sh ' terraform workspace select prod' 
+                      sh 'terraform init'
+                      sh 'terraform validate'
+                      sh 'terraform plan -var-file=prod.tfvars'
+                      sh 'terraform apply -var-file=prod.tfvars--auto-approve'
+                      
+                    } else {
+                      sh 'terraform workspace new prod'
+                      sh ' terraform workspace select prod' 
+                      sh 'terraform init'
+                      sh 'terraform validate'
+                      sh 'terraform plan -var-file=prod.tfvars'
+                      sh 'terraform apply -var-file=prod.tfvars--auto-approve'
+                        
+                    }
+                }
+            }
+        }
         stage('Ansible Dynamic Inventory & ping_playbook'){
             steps{
                 script{
@@ -130,6 +176,29 @@ pipeline {
             }
            
         }
+        stage('Destroy dev & Prod Infrs'){
+            steps{
+                script{
+                   def USER_INPUT = input(
+                    message: 'you wnat Destroy the Dev and Prod Infra?',
+                    parameters: [
+                            [$class: 'ChoiceParameterDefinition',
+                             choices: ['no','yes'].join('\n'),
+                             name: 'input',
+                             description: 'Menu - select box option']
+                    ])
+
+                    echo "The answer is: ${USER_INPUT}"
+
+                    if( "${USER_INPUT}" == "yes"){
+                        //do something
+                    } else {
+                        //do something else
+                    }
+                }
+            }
+        }
+        
     }
     post{
         success{

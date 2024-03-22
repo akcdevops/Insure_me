@@ -9,6 +9,7 @@ Environment=CATALINA_HOME=/home/ubuntu/apache-tomcat-10.1.19
 Environment=CATALINA_BASE=/home/ubuntu/apache-tomcat-10.1.19
 
 ExecStart=/home/ubuntu/apache-tomcat-10.1.19/bin/startup.sh
+ExecStop=/home/ubuntu/apache-tomcat-10.1.19/bin/shutdown.sh
 
 RestartSec=10
 Restart=always
