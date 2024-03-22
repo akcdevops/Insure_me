@@ -23,13 +23,8 @@
       dest: /home/ubuntu
       remote_src: true
     
-  - name: Moving to opt directory
-    command: mv /home/ubuntu/apache-tomcat-10.1.19 /home/ubuntu/opt/tomact
-    args:
-      creates: /home/ubuntu/opt/tomact
-    
   - name: Starting Tomact Service ....
-    shell: nohup /home/ubuntu/opt/tomact/bin/startup.sh
+    shell: nohup /home/ubuntu/apache-tomcat-10.1.19/bin/startup.sh
 
   - name: Reload the SystemD to re-read configurations
     become: yes
