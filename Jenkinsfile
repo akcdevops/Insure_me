@@ -160,6 +160,8 @@ pipeline {
         stage('Destroy dev & Prod Infrs'){
             steps{
                 script{
+                    sh 'sudo chmod +x slack.sh'
+                    sh "./slack.sh"
                    def USER_INPUT = input(
                     message: 'you wnat Destroy the Dev and Prod Infra?',
                     parameters: [
