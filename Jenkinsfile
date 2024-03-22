@@ -123,7 +123,7 @@ pipeline {
                     // ansiblePlaybook becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', installation: 'ansible', inventory: 'aws_ec2.yml', playbook: 'ping_playbook.yml'
                     // sh "ansible-inventory -i --graph"
                     // sh "ansible-playbook -i aws_ec2.yml ping_playbook.yml"
-                    ansiblePlaybook becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', disableHostKeyChecking: true, installation: 'ansible', inventory: '/etc/ansibleaws_ec2.yml', playbook: '/etc/ansible/ping.yml', vaultTmpPath: ''
+                    ansiblePlaybook become: true, becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', disableHostKeyChecking: true, extras: '-e host_group=\\"tag_${TagKey}_${TagValue}\\"', installation: 'ansible', inventory: 'etc/ansible/aws_ec2.yml', playbook: '/etc/ansible/ping.yml', vaultTmpPath: ''
                      }
                 }
             }
