@@ -1,3 +1,4 @@
 ansible_ssh_private_key_file: akcdevops.pem
 ansible_ssh_user: ubuntu
 ansible_ssh_common_tags: '-o StrictHostKeyChecking=no'
+ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
