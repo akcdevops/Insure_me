@@ -120,9 +120,10 @@ pipeline {
             steps{
                 script{
                    
-                      sh "sudo terraform init "
+                     
                       
                       sh "sudo terraform workspace select dev"
+                       sh "sudo terraform init "
                       sh "sudo terraform validate"
                       sh "sudo terraform plan -var-file=dev.tfvars"
                       sh "sudo terraform apply -var-file=dev.tfvars --auto-approve" 
@@ -132,9 +133,10 @@ pipeline {
         stage('Provisioning Prod Server'){
             steps{
                 script{
-                      sh "sudo terraform init"
+                      
                       
                       sh "sudo terraform workspace select prod"
+                      sh "sudo terraform init"
                       sh "sudo terraform validate"
                       sh "sudo terraform plan -var-file=prod.tfvars"
                       sh "sudo terraform apply -var-file=prod.tfvars --auto-approve"
