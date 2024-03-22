@@ -123,7 +123,7 @@ pipeline {
                     withAWS(credentials: 'awscred',region: 'ap-south-1') {
                     // ansiblePlaybook becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', installation: 'ansible', inventory: 'aws_ec2.yml', playbook: 'ping_playbook.yml'
                     sh "sudo ansible-inventory -i aws_ec2.yml --graph"
-                    sh "sudo ansible-playbook -i aws_ec2.yml tomcat.yml"
+                    sh "sudo ansible-playbook -i aws_ec2.yml tomcat_playbook.yml"
                     // ansiblePlaybook become: true, becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', disableHostKeyChecking: true, extras: '-e host_group=\\"tag_${TagKey}_${TagValue}\\"', installation: 'ansible', inventory: 'etc/ansible/aws_ec2.yml', playbook: '/etc/ansible/ping.yml', vaultTmpPath: ''
                      }
                 }
