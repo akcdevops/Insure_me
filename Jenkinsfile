@@ -134,12 +134,12 @@ pipeline {
                     //   sh "terraform plan -var-file=dev.tfvars"
                     //   sh "terraform apply -var-file=dev.tfvars --auto-approve" 
                     // }
-                      sh "terraform init"
+                      sh "sudo terraform init"
                       
-                      sh "terraform workspace select dev"
-                      sh "terraform validate"
-                      sh "terraform plan -var-file=dev.tfvars"
-                      sh "terraform apply -var-file=dev.tfvars --auto-approve" 
+                      sh "sudo terraform workspace select dev"
+                      sh "sudo terraform validate"
+                      sh "sudo terraform plan -var-file=dev.tfvars"
+                      sh "sudo terraform apply -var-file=dev.tfvars --auto-approve" 
                 }
             }
         }
