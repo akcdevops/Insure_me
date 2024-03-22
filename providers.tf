@@ -15,7 +15,7 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket         = "insureme-project"
-    key            = "terraform.tfstate.d"
+    key            = "terraform.tfstate.d/terraform.tfstate"
     region         = "ap-south-1"
     dynamodb_table = "insuremestatefile"
   }
