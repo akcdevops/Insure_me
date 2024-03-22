@@ -146,7 +146,7 @@ pipeline {
         stage('Provisioning Prod Server'){
             steps{
                 script{
-                    if (sh(returnStatus: true, script: 'terraform workspace list | grep -q prod && exit 0 || exit 1').exitCode == 0) {
+                    // if (sh(returnStatus: true, script: 'terraform workspace list | grep -q prod && exit 0 || exit 1').exitCode == 0) {
                       sh "sudo terraform init"
                       
                       sh "sudo terraform workspace select prod"
@@ -154,15 +154,15 @@ pipeline {
                       sh "sudo terraform plan -var-file=prod.tfvars"
                       sh "sudo terraform apply -var-file=prod.tfvars --auto-approve"
                       
-                    } else {
-                      sh 'sudo terraform init'
-                      sh 'sudo terraform workspace new prod'
-                      sh 'sudo terraform workspace select prod' 
-                      sh 'sudo terraform validate'
-                      sh 'sudo terraform plan -var-file=prod.tfvars'
-                      sh 'sudo terraform apply -var-file=prod.tfvars--auto-approve'
+                    // } else {
+                    //   sh 'sudo terraform init'
+                    //   sh 'sudo terraform workspace new prod'
+                    //   sh 'sudo terraform workspace select prod' 
+                    //   sh 'sudo terraform validate'
+                    //   sh 'sudo terraform plan -var-file=prod.tfvars'
+                    //   sh 'sudo terraform apply -var-file=prod.tfvars--auto-approve'
                         
-                    }
+                    // }
                 }
             }
         }
