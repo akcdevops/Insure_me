@@ -34,106 +34,92 @@ pipeline {
                 }
             }
         }
-        // stage('Build')
-        // {
-        //     steps
-        //     {
-        //        sh 'mvn clean package install site surefire-report:report'
-        //     }  
-        // }
-        // stage('Artifact Upload to S3'){
-        //     steps{
-        //        script{
-        //          withAWS(credentials: 'awscred',region: 'ap-south-1') 
-        //          {
-        //             s3Upload(bucket: 'insureme-project', path: '/target/insure-me-1.0.jar',file: 'target/insure-me-1.0.jar')
-        //          }
-        //        } 
-        //     }
+        stage('Build')
+        {
+            steps
+            {
+               sh 'mvn clean package install site surefire-report:report'
+            }  
+        }
+        stage('Artifact Upload to S3'){
+            steps{
+               script{
+                 withAWS(credentials: 'awscred',region: 'ap-south-1') 
+                 {
+                    s3Upload(bucket: 'insureme-project', path: '/target/insure-me-1.0.jar',file: 'target/insure-me-1.0.jar')
+                 }
+               } 
+            }
              
 
-        // }
-        // stage('Docker Build & Run'){
-        //     steps{
-        //         withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-        //             script{ 
-        //                 sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-        //                 // def containerExists = sh(returnStatus: true, script: "docker ps -aq --filter name=${CONTAINER_NAME}").trim() != ''
-        //                 // if (containerExists) {
-        //                 //     // // Check container status (running or stopped)
-        //                 //     // def containerStatus = sh(returnStatus: true, script: "docker inspect --format '{{.State.Status}}' ${CONTAINER_NAME}").trim()
-        //                 //     //     if (containerStatus == 'stopped') {
-        //                 //     //         echo "Container '${CONTAINER_NAME}' is stopped. Condition met."
-        //                 //     //         // Add steps to proceed based on the stopped container (optional)
-        //                 //     //     } else {
-        //                 //     //         echo "Container '${CONTAINER_NAME}' is not stopped. Skipping actions."
-        //                 //     //     }
-        //                 //     sh 'docker stop ${CONTAINER_NAME}'
-        //                 //     sh 'docker rm ${CONTAINER_NAME}'
-        //                 // } else {
-        //                     // echo "Container '${CONTAINER_NAME}' not found."
+        }
+        stage('Docker Build & Run'){
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    script{ 
+                        sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                        // def containerExists = sh(returnStatus: true, script: "docker ps -aq --filter name=${CONTAINER_NAME}").trim() != ''
+                        // if (containerExists) {
+                        //     // // Check container status (running or stopped)
+                        //     // def containerStatus = sh(returnStatus: true, script: "docker inspect --format '{{.State.Status}}' ${CONTAINER_NAME}").trim()
+                        //     //     if (containerStatus == 'stopped') {
+                        //     //         echo "Container '${CONTAINER_NAME}' is stopped. Condition met."
+                        //     //         // Add steps to proceed based on the stopped container (optional)
+                        //     //     } else {
+                        //     //         echo "Container '${CONTAINER_NAME}' is not stopped. Skipping actions."
+                        //     //     }
+                        //     sh 'docker stop ${CONTAINER_NAME}'
+                        //     sh 'docker rm ${CONTAINER_NAME}'
+                        // } else {
+                            // echo "Container '${CONTAINER_NAME}' not found."
                             
-        //                     sh 'docker build -t ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION} . '
-        //                     sh 'docker build -t ${DOCKER_HUB}/${IMAGE_NAME}:latest .'
-        //                     sh 'docker stop ${CONTAINER_NAME}'
-        //                     sh 'docker rm ${CONTAINER_NAME}'
-        //                     sh 'docker run -d --name ${CONTAINER_NAME} -p 8081:8081 ${DOCKER_HUB}/${IMAGE_NAME}:latest'
-        //                 // } 
-        //             }
-        //         }
+                            sh 'docker build -t ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION} . '
+                            sh 'docker build -t ${DOCKER_HUB}/${IMAGE_NAME}:latest .'
+                            sh 'docker stop ${CONTAINER_NAME}'
+                            sh 'docker rm ${CONTAINER_NAME}'
+                            sh 'docker run -d --name ${CONTAINER_NAME} -p 8081:8081 ${DOCKER_HUB}/${IMAGE_NAME}:latest'
+                        // } 
+                    }
+                }
                 
-        //     }
+            }
 
-        // }
-        // stage('Docker Push'){
-        //     steps{
-        //          withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-        //         script{
-        //            sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-        //            sh 'docker push ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION} && docker push ${DOCKER_HUB}/${IMAGE_NAME}:latest'
-        //            sh 'docker rmi ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION}'
+        }
+        stage('Docker Push'){
+            steps{
+                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                script{
+                   sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                   sh 'docker push ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION} && docker push ${DOCKER_HUB}/${IMAGE_NAME}:latest'
+                   sh 'docker rmi ${DOCKER_HUB}/${IMAGE_NAME}:${VERSION}'
                    
-        //         }
-        //         }
-        //     }
+                }
+                }
+            }
 
-        // } 
-        // stage('Push to ECR') {
-        //     steps {
-        //         script {
-        //             withAWS(credentials: 'awscred',region: 'ap-south-1') {
-        //             // Get ECR login command (replace with your region if different)
-        //             //  sh "aws ecr get-authorization-token --region ${AWS_REGION} --query authorizationData[0].authorizationToken | tr -d '\r'"
-        //             sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        //             sh "docker build -t ${IMAGE_NAME}:${VERSION} ."
-        //             // Construct the ECR repository URI
-        //             sh "docker tag ${IMAGE_NAME}:${VERSION} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
-        //             def ecrRepoUriversion = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
-        //             // Push the image to ECR
-        //             sh "docker push $ecrRepoUriversion"
-        //             sh "docker rmi ${IMAGE_NAME}:${VERSION}"
-        //          }
-        //         }
-        //     }
-        // }
+        } 
+        stage('Push to ECR') {
+            steps {
+                script {
+                    withAWS(credentials: 'awscred',region: 'ap-south-1') {
+                    // Get ECR login command (replace with your region if different)
+                    //  sh "aws ecr get-authorization-token --region ${AWS_REGION} --query authorizationData[0].authorizationToken | tr -d '\r'"
+                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+                    sh "docker build -t ${IMAGE_NAME}:${VERSION} ."
+                    // Construct the ECR repository URI
+                    sh "docker tag ${IMAGE_NAME}:${VERSION} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
+                    def ecrRepoUriversion = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
+                    // Push the image to ECR
+                    sh "docker push $ecrRepoUriversion"
+                    sh "docker rmi ${IMAGE_NAME}:${VERSION}"
+                 }
+                }
+            }
+        }
         stage('Provisioning Dev Server'){
             steps{
                 script{
-                    // if (sh(returnStatus: true, script: 'terraform workspace list | grep -q dev && exit 0 || exit 1').exitCode == 0) {
-                    //   sh "terraform init"
-                    //   sh "terraform workspace select dev"
-                    //   sh "terraform validate"
-                    //   sh "terraform plan -var-file=dev.tfvars"
-                    //   sh "terraform apply -var-file=dev.tfvars --auto-approve"
-                      
-                    // } else {
-                    //   sh "terraform init"
-                    //   sh "terraform workspace new dev"
-                    //   sh "terraform workspace select dev"
-                    //   sh "terraform validate"
-                    //   sh "terraform plan -var-file=dev.tfvars"
-                    //   sh "terraform apply -var-file=dev.tfvars --auto-approve" 
-                    // }
+                   
                       sh "sudo terraform init "
                       
                       sh "sudo terraform workspace select dev"
@@ -146,62 +132,55 @@ pipeline {
         stage('Provisioning Prod Server'){
             steps{
                 script{
-                    // if (sh(returnStatus: true, script: 'terraform workspace list | grep -q prod && exit 0 || exit 1').exitCode == 0) {
                       sh "sudo terraform init"
                       
                       sh "sudo terraform workspace select prod"
                       sh "sudo terraform validate"
                       sh "sudo terraform plan -var-file=prod.tfvars"
                       sh "sudo terraform apply -var-file=prod.tfvars --auto-approve"
-                      
-                    // } else {
-                    //   sh 'sudo terraform init'
-                    //   sh 'sudo terraform workspace new prod'
-                    //   sh 'sudo terraform workspace select prod' 
-                    //   sh 'sudo terraform validate'
-                    //   sh 'sudo terraform plan -var-file=prod.tfvars'
-                    //   sh 'sudo terraform apply -var-file=prod.tfvars--auto-approve'
-                        
-                    // }
                 }
             }
         }
-        // stage('Ansible Dynamic Inventory & ping_playbook'){
-        //     steps{
-        //         script{
+        stage('Ansible Dynamic Inventory & ping_playbook'){
+            steps{
+                script{
                    
-        //             withAWS(credentials: 'awscred',region: 'ap-south-1') {
-        //             // ansiblePlaybook becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', installation: 'ansible', inventory: 'aws_ec2.yml', playbook: 'ping_playbook.yml'
-        //             sh "sudo ansible-inventory -i aws_ec2.yml --graph"
-        //             sh "sudo ansible-playbook -i aws_ec2.yml tomcat_playbook.yml"
-        //             // ansiblePlaybook become: true, becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', disableHostKeyChecking: true, extras: '-e host_group=\\"tag_${TagKey}_${TagValue}\\"', installation: 'ansible', inventory: 'etc/ansible/aws_ec2.yml', playbook: '/etc/ansible/ping.yml', vaultTmpPath: ''
-        //              }
-        //         }
-        //     }
+                    withAWS(credentials: 'awscred',region: 'ap-south-1') {
+                    // ansiblePlaybook becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', installation: 'ansible', inventory: 'aws_ec2.yml', playbook: 'ping_playbook.yml'
+                    sh "sudo ansible-inventory -i aws_ec2.yml --graph"
+                    sh "sudo ansible-playbook -i aws_ec2.yml tomcat_playbook.yml"
+                    // ansiblePlaybook become: true, becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', disableHostKeyChecking: true, extras: '-e host_group=\\"tag_${TagKey}_${TagValue}\\"', installation: 'ansible', inventory: 'etc/ansible/aws_ec2.yml', playbook: '/etc/ansible/ping.yml', vaultTmpPath: ''
+                     }
+                }
+            }
            
-        // }
-        // stage('Destroy dev & Prod Infrs'){
-        //     steps{
-        //         script{
-        //            def USER_INPUT = input(
-        //             message: 'you wnat Destroy the Dev and Prod Infra?',
-        //             parameters: [
-        //                     [$class: 'ChoiceParameterDefinition',
-        //                      choices: ['no','yes'].join('\n'),
-        //                      name: 'input',
-        //                      description: 'Menu - select box option']
-        //             ])
+        }
+        stage('Destroy dev & Prod Infrs'){
+            steps{
+                script{
+                   def USER_INPUT = input(
+                    message: 'you wnat Destroy the Dev and Prod Infra?',
+                    parameters: [
+                            [$class: 'ChoiceParameterDefinition',
+                             choices: ['destroy'].join('\n'),
+                             name: 'input',
+                             description: 'Menu - select box option']
+                    ])
 
-        //             echo "The answer is: ${USER_INPUT}"
+                    echo "The answer is: ${USER_INPUT}"
 
-        //             if( "${USER_INPUT}" == "yes"){
-        //                 //do something
-        //             } else {
-        //                 //do something else
-        //             }
-        //         }
-        //     }
-        // }
+                    if( "${USER_INPUT}" == "destroy"){
+                        sh "sudo terraform workspace select prod"
+                       sh "sudo terraform destroy -var-file=prod.tfvars --auto-approve"
+                       sh "sudo terraform workspace select dev"
+                       sh "sudo terraform destroy -var-file=dev.tfvars --auto-approve"
+
+                    } else {
+                        //do something else
+                    }
+                }
+            }
+        }
         
     }
     post{
