@@ -74,10 +74,15 @@ resource "aws_route_table_association" "private_rt_subnet_association" {
   subnet_id      = aws_subnet.private_subnet.id
   route_table_id = aws_route_table.private_subnets.id
 }
-resource "aws_key_pair" "key" {
-  key_name   = var.key_name
-  public_key = var.public_key
-}
+# resource "aws_key_pair" "key" {
+#   key_name   = var.key_name
+#   public_key = var.public_key
+# }
+
+# import {
+#   to = aws_key_pair.ansible
+#   id = "ansible"
+# }
 # Ec2 Instances
 resource "aws_instance" "main" {
   ami = var.ami_id
@@ -85,8 +90,8 @@ resource "aws_instance" "main" {
   associate_public_ip_address = true
   subnet_id = aws_subnet.public_subnet.id
   security_groups = [ aws_security_group.main.id ]
-  key_name = aws_key_pair.key.public_key
-  tags = {
+  key_name =var.key_name
+  tags = {  
         Name = "${terraform.workspace}-${var.projectname}"
         Os = "ubuntu"
         Env = "${terraform.workspace}"
