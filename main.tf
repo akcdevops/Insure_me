@@ -91,6 +91,8 @@ resource "aws_instance" "main" {
   subnet_id = aws_subnet.public_subnet.id
   security_groups = [ aws_security_group.main.id ]
   key_name =var.key_name
+  tenancy = "default"
+  vpc_security_group_ids = [ aws_security_group.main.id ]
   tags = {  
         Name = "${terraform.workspace}-${var.projectname}"
         Os = "ubuntu"
