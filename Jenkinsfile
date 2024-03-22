@@ -134,7 +134,7 @@ pipeline {
                     //   sh "terraform plan -var-file=dev.tfvars"
                     //   sh "terraform apply -var-file=dev.tfvars --auto-approve" 
                     // }
-                      sh "sudo terraform init"
+                      sh "sudo terraform init --auto-approve"
                       
                       sh "sudo terraform workspace select dev"
                       sh "sudo terraform validate"
