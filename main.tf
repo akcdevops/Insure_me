@@ -138,7 +138,7 @@ resource "aws_security_group" "dynamic_sg" {
   for_each = var.config
   name = "${each.key}-sg"
   description = "The security group for ${each.key}"
-  vpc_id = data.aws_vpc.default.id
+  vpc_id = aws_vpc.main.id
 
   dynamic "ingress" {
     for_each = each.value.ports[*]
