@@ -53,13 +53,5 @@
     until: "result.status == 200"
     retries: 5
     delay: 10
-
-  - name: Access web server resources
-    loop: "{{ ubuntu }}"  # Loop through the list
-    loop_control:
-      loop_var: host_ip
-    uri:
-      url: https://{{ host_ip }}:8080  # Use host_ip loop variable
-      method: GET
         
         
