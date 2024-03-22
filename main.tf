@@ -74,7 +74,10 @@ resource "aws_route_table_association" "private_rt_subnet_association" {
   subnet_id      = aws_subnet.private_subnet.id
   route_table_id = aws_route_table.private_subnets.id
 }
-
+resource "aws_key_pair" "key" {
+  key_name   = var.key_name
+  public_key = var.public_key
+}
 # Ec2 Instances
 resource "aws_instance" "main" {
   ami = var.ami_id
