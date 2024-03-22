@@ -1,5 +1,6 @@
 - name: Ping dynamic inventory
   hosts: ubuntu
+  become: yes
 
   tasks:
   - name: Package update
