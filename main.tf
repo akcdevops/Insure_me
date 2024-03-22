@@ -81,7 +81,7 @@ resource "aws_instance" "main" {
   instance_type = var.instance_type
   associate_public_ip_address = true
   subnet_id = aws_subnet.public_subnet.id
-  security_groups = [ aws_security_group.dynamic_sg.id ]
+  security_groups = [ aws_security_group.main.id ]
   key_name = aws_key_pair.key.key_name
   tags = {
         Name = "${terraform.workspace}-${var.projectname}"
@@ -97,36 +97,35 @@ resource "aws_security_group" "main" {
   description = "Allow TLS inbound traffic and all outbound traffic"
   vpc_id      = aws_vpc.main.id
   
-  ingress =[
-    {
+    ingress {
       from_port = 80
       to_port = 80
       protocol = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
       description = "allow http port"
-    },
-    {
+    }
+    ingress {
       from_port = 22
       to_port = 22
       protocol = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
       description = "allow ssh port"
-    },
-    {
+    }
+    ingress {
       from_port = 8080
       to_port = 8080
       protocol = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
       description = "allow tomact port"
     }
-  ]
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
+  
+    egress {
+      from_port        = 0
+      to_port          = 0
+      protocol         = "-1"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+    }
 
   tags = {
     Name = "${terraform.workspace}-${var.projectname}-sg"
@@ -134,34 +133,34 @@ resource "aws_security_group" "main" {
   
 }
 
-resource "aws_security_group" "dynamic_sg" {
-  for_each = var.config
-  name = "${each.key}-sg"
-  description = "The security group for ${each.key}"
-  vpc_id = aws_vpc.main.id
+# resource "aws_security_group" "dynamic_sg" {
+#   for_each = var.config
+#   name = "${each.key}-sg"
+#   description = "The security group for ${each.key}"
+#   vpc_id = aws_vpc.main.id
 
-  dynamic "ingress" {
-    for_each = each.value.ports[*]
-    content {
-      from_port   =  ingress.value.from
-      to_port     =  ingress.value.to
-      protocol    = "tcp"
-      cidr_blocks = ingress.value.from != 1433 ? [ ingress.value.source] : null 
-      ipv6_cidr_blocks = ingress.value.source=="::/0" ? [ingress.value.source] : null
-      security_groups =   ingress.value.from == 1433 ? [ ingress.value.source] : null 
-    }
-  }
+#   dynamic "ingress" {
+#     for_each = each.value.ports[*]
+#     content {
+#       from_port   =  ingress.value.from
+#       to_port     =  ingress.value.to
+#       protocol    = "tcp"
+#       cidr_blocks = ingress.value.from != 1433 ? [ ingress.value.source] : null 
+#       ipv6_cidr_blocks = ingress.value.source=="::/0" ? [ingress.value.source] : null
+#       security_groups =   ingress.value.from == 1433 ? [ ingress.value.source] : null 
+#     }
+#   }
 
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
+#   egress {
+#     from_port        = 0
+#     to_port          = 0
+#     protocol         = "-1"
+#     cidr_blocks      = ["0.0.0.0/0"]
+#     ipv6_cidr_blocks = ["::/0"]
+#   }
 
-  tags = {
-    "Server" = "${each.key}"
-    "Provider" = "Terraform"
-  }
-}
+#   tags = {
+#     "Server" = "${each.key}"
+#     "Provider" = "Terraform"
+#   }
+# }
