@@ -85,7 +85,7 @@ resource "aws_instance" "main" {
   associate_public_ip_address = true
   subnet_id = aws_subnet.public_subnet.id
   security_groups = [ aws_security_group.main.id ]
-  key_name = aws_key_pair.key.key_name
+  key_name = aws_key_pair.key.public_key
   tags = {
         Name = "${terraform.workspace}-${var.projectname}"
         Os = "ubuntu"
