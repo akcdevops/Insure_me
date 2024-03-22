@@ -120,23 +120,20 @@ pipeline {
             steps{
                 script{
                     if (sh(returnStatus: true, script: 'terraform workspace list | grep -q dev && exit 0 || exit 1').exitCode == 0) {
-                      sh 'echo "terraform workspace select dev"'
-                      
-                      sh 'terraform init'
-                      sh ' terraform workspace select dev' 
-                    //   sh 'terraform validate'
-                    //   sh 'terraform plan -var-file=dev.tfvars'
-                    //   sh 'terraform apply -var-file=dev.tfvars--auto-approve'
+                      sh "terraform init"
+                      sh "terraform workspace select dev"
+                      sh "terraform validate'
+                      sh "terraform plan -var-file=dev.tfvars"
+                      sh "terraform apply -var-file=dev.tfvars --auto-approve"
                       
                     } else {
-                        sh 'terraform init'
-                      sh 'terraform workspace new dev'
-                      sh ' terraform workspace select dev' 
-                      
-                    //   sh 'terraform validate'
-                    //   sh 'terraform plan -var-file=dev.tfvars'
-                    //   sh 'terraform apply -var-file=dev.tfvars--auto-approve'
-                        
+                      sh "terraform init"
+                      sh "terraform workspace new dev"
+                      sh "terraform workspace select dev"
+                      sh "terraform workspace select dev"
+                      sh "terraform validate'
+                      sh "terraform plan -var-file=dev.tfvars"
+                      sh "terraform apply -var-file=dev.tfvars --auto-approve" 
                     }
                 }
             }
