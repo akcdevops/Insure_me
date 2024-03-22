@@ -119,12 +119,23 @@ pipeline {
         stage('Ansible Dynamic Inventory & ping_playbook'){
             steps{
                 script{
-                    withAWS(credentials: 'awscred',region: 'ap-south-1') {
-                    // ansiblePlaybook becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', installation: 'ansible', inventory: 'aws_ec2.yml', playbook: 'ping_playbook.yml'
-                    sh "ansible-inventory -i aws_ec2.yml --graph"
-                    sh "ansible-playbook -i aws_ec2.yml ping_playbook.yml"
-                    // ansiblePlaybook become: true, becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', disableHostKeyChecking: true, extras: '-e host_group=\\"tag_${TagKey}_${TagValue}\\"', installation: 'ansible', inventory: 'etc/ansible/aws_ec2.yml', playbook: '/etc/ansible/ping.yml', vaultTmpPath: ''
-                     }
+                    withCredentials([<object of type com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentialsBinding>]) {
+                    def inventoryScript = 'inventory.py'
+                    def playbookName = 'ping_playbook.yml'
+
+                    // Optional: Define additional Ansible options (e.g., extra-vars)
+                    def ansibleOptions = '-e host_group=\\"tag_${TagKey}_${TagValue}\\"'
+
+                    sh """
+                        ansible-playbook -i "$(python ${inventoryScript})" ${ansibleOptions} ${playbookName}
+                    """
+                      } 
+                    // withAWS(credentials: 'awscred',region: 'ap-south-1') {
+                    // // ansiblePlaybook becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', installation: 'ansible', inventory: 'aws_ec2.yml', playbook: 'ping_playbook.yml'
+                    // sh "ansible-inventory -i aws_ec2.yml --graph"
+                    // sh "ansible-playbook -i aws_ec2.yml ping_playbook.yml"
+                    // // ansiblePlaybook become: true, becomeUser: 'ubuntu', credentialsId: 'akcdevops.pem', disableHostKeyChecking: true, extras: '-e host_group=\\"tag_${TagKey}_${TagValue}\\"', installation: 'ansible', inventory: 'etc/ansible/aws_ec2.yml', playbook: '/etc/ansible/ping.yml', vaultTmpPath: ''
+                    //  }
                 }
             }
            
