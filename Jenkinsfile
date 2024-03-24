@@ -13,6 +13,30 @@ pipeline {
         AWS_REGION = "ap-south-1"
     }
     stages {
+        stage('Destroy dev & Prod Infrs'){
+            steps{
+                script{  
+                    def USER_INPUT = input(
+                    message: 'you want to destroy previous Dev and Prod Infra?',
+                    parameters: [
+                        [$class: 'ChoiceParameterDefinition',
+                        choices: ['destroy'].join('\n'),
+                        name: 'input',
+                        description: 'Menu - select box option']
+                    ])
+                    echo "The answer is: ${USER_INPUT}"
+                    if( "${USER_INPUT}" == "destroy"){
+                        sh "sudo terraform workspace select prod"
+                        sh "sudo terraform destroy -var-file=prod.tfvars --auto-approve"
+                        sh "sudo terraform workspace select dev"
+                        sh "sudo terraform destroy -var-file=dev.tfvars --auto-approve"
+
+                    } else {
+                        //do something else
+                    }
+                }
+            }
+        }
         stage('git checkout') {
             steps {
                 git branch: 'master', url: 'https://github.com/akcdevops/Insure_me.git'
@@ -121,30 +145,7 @@ pipeline {
             }
            
         }
-        stage('Destroy dev & Prod Infrs'){
-            steps{
-                script{  
-                    def USER_INPUT = input(
-                    message: 'you wnat Destroy the Dev and Prod Infra?',
-                    parameters: [
-                        [$class: 'ChoiceParameterDefinition',
-                        choices: ['destroy'].join('\n'),
-                        name: 'input',
-                        description: 'Menu - select box option']
-                    ])
-                    echo "The answer is: ${USER_INPUT}"
-                    if( "${USER_INPUT}" == "destroy"){
-                        sh "sudo terraform workspace select prod"
-                        sh "sudo terraform destroy -var-file=prod.tfvars --auto-approve"
-                        sh "sudo terraform workspace select dev"
-                        sh "sudo terraform destroy -var-file=dev.tfvars --auto-approve"
-
-                    } else {
-                        //do something else
-                    }
-                }
-            }
-        }
+        
         
     }
     post{
