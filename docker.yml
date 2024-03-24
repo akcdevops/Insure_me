@@ -23,13 +23,13 @@
 
   - name: Stop and remove the existing container (if running)
     docker_container:
-        name: challagondlaanilkumar/insureme:latest
-        state: stopped
-      docker_container:
-        name: challagondlaanilkumar/insureme:latest
-        state: absent
-      when: container_info.state == "running"
-      delegate_to: localhost 
+      name: challagondlaanilkumar/insureme:latest
+      state: stopped
+    docker_container:
+      name: challagondlaanilkumar/insureme:latest
+      state: absent
+    when: container_info.state == "running"
+    delegate_to: localhost 
 
   - name: Deploy Docker Container
     command: docker run -d --name insureme -p 8080:8080 challagondlaanilkumar/insureme:latest

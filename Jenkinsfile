@@ -13,7 +13,7 @@ pipeline {
         AWS_REGION = "ap-south-1"
     }
     stages {
-        stage('Destroy dev & Prod Infrs'){
+        stage('Destroying Previous Infra'){
             steps{
                 script{  
                     def USER_INPUT = input(
