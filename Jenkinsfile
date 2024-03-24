@@ -80,7 +80,7 @@ pipeline {
                         sh "docker tag ${IMAGE_NAME}:${VERSION} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
                         def ecrRepoUriversion = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${VERSION}"
                         sh "docker push $ecrRepoUriversion"
-                        sh "docker rmi -f $(docker images -aq)"
+                        sh 'docker rmi -f $(docker images -aq)'
                     }
                 }
             }
