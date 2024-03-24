@@ -92,7 +92,6 @@ resource "aws_instance" "main" {
   security_groups = [ aws_security_group.main.id ]
   key_name =var.key_name
   tenancy = "default"
-  vpc_security_group_ids = [ aws_security_group.main.id ]
   tags = {  
         Name = "${terraform.workspace}-${var.projectname}"
         Os = "ubuntu"
@@ -122,8 +121,8 @@ resource "aws_security_group" "main" {
       description = "allow ssh port"
     }
     ingress {
-      from_port = 8080
-      to_port = 8080
+      from_port = 8081
+      to_port = 8081
       protocol = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
       description = "allow tomact port"

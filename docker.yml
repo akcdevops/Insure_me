@@ -32,4 +32,4 @@
     delegate_to: localhost 
 
   - name: Deploy Docker Container
-    command: docker run -d --name insureme -p 8080:8080 challagondlaanilkumar/insureme:latest
+    command: docker run -d --name insureme -p 8081:8081 challagondlaanilkumar/insureme:latest
