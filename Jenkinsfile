@@ -115,7 +115,7 @@ pipeline {
                     sh "sleep 2m"
                     withAWS(credentials: 'awscred',region: 'ap-south-1') {
                         sh "sudo ansible-inventory -i aws_ec2.yml --graph"
-                        sh "sudo ansible-playbook -i aws_ec2.yml tomcat_playbook.yml"
+                        sh "sudo ansible-playbook -i aws_ec2.yml docker.yml"
                     }
                 }
             }
