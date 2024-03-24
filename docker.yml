@@ -28,7 +28,7 @@
     docker_container:
       name: challagondlaanilkumar/insureme:latest
       state: absent
-    when: container_info.state == "running"
+    when: container_info.exists
     delegate_to: localhost 
 
   - name: Deploy Docker Container
